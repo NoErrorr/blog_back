@@ -1,0 +1,84 @@
+version: '3.1'
+
+services:
+  elasticsearch:
+    image: elastic/elasticsearch:8.6.2
+    container_name: elasticsearch
+    restart: always
+    environment:
+      - node.name=es
+      - bootstrap.memory_lock=true
+      - cluster.initial_master_nodes=es
+      - xpack.security.enabled=false
+      - ELASTICSEARCH_PASSWORD={{ elasticsearch_password }}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - backend
+
+  kibana:
+    image: elastic/kibana:8.6.2
+    container_name: kibana
+    restart: always
+    environment:
+      - ELASTICSEARCH_HOSTS=["http://elasticsearch:9200"]
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD={{ elasticsearch_password }}
+    ports:
+      - 5601:5601
+    networks:
+      - backend
+
+  logstash:
+    image: elastic/logstash:8.6.2
+    container_name: logstash
+    restart: always
+    environment:
+      - ELASTICSEARCH_HOSTS=["http://elasticsearch:9200"]
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD={{ elasticsearch_password }}
+    volumes:
+      - /db-data/logstash/pipeline:/usr/share/logstash/pipeline
+    ports:
+      - 5044:5044
+      - 9600:9600
+      - 5200:5200/udp
+      - 5200:5200/tcp
+    networks:
+      - backend
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD={{ mysql_root_password }}
+      - MYSQL_DATABASE={{ mysql_database }}
+      - MYSQL_USER={{ mysql_user }}
+      - MYSQL_PASSWORD={{ mysql_password }}
+    volumes:
+      - /db-data/mysql/data:/var/lib/mysql
+      - /db-data/mysql/conf.d:/etc/mysql/conf.d
+    ports:
+      - 3306:3306
+    networks:
+      - backend
+
+  mysql-adminer:
+    image: adminer
+    container_name: mysql-adminer
+    restart: always
+    environment:
+      - ADMINER_DEFAULT_SERVER=mysql
+    ports:
+      - 8040:8080
+    networks:
+      - backend
+
+networks:
+  backend:
