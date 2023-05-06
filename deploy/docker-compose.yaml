@@ -27,30 +27,13 @@ services:
     restart: always
     environment:
       - ELASTICSEARCH_HOSTS=["http://elasticsearch:9200"]
-      - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD={{ elasticsearch_password }}
     ports:
       - 5601:5601
     networks:
       - backend
-
-  logstash:
-    image: elastic/logstash:8.6.2
-    container_name: logstash
-    restart: always
-    environment:
-      - ELASTICSEARCH_HOSTS=["http://elasticsearch:9200"]
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD={{ elasticsearch_password }}
-    volumes:
-      - /db-data/logstash/pipeline:/usr/share/logstash/pipeline
-    ports:
-      - 5044:5044
-      - 9600:9600
-      - 5200:5200/udp
-      - 5200:5200/tcp
-    networks:
-      - backend
+    depends_on:
+      - elasticsearch
 
   mysql:
     image: mysql:8.0
