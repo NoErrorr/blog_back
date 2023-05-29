@@ -1,0 +1,14 @@
+{
+    "mappings": {
+        "post_id": {
+            "type": "keyword"
+        },
+        "user_id": {
+            "type": "integer"
+        },
+        "timestamp": {
+            "type": "date",
+            "format": "yyyy-MM-dd HH:mm:ss"
+        }
+    }
+}

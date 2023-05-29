@@ -1,0 +1,43 @@
+{
+    "mappings": {
+        "user_id": {
+            "type": "integer"
+        },
+        "category": {
+            "type": "object",
+            "properties": {
+                "first_depth": {
+                    "type": "keyword"
+                },
+                "second_depth": {
+                    "type": "keyword"
+                }
+            }
+        },
+        "created_at": {
+            "type": "date",
+            "format": "yyyy-MM-dd HH:mm:ss"
+        },
+        "updated_at": {
+            "type": "date",
+            "format": "yyyy-MM-dd HH:mm:ss"
+        },
+        "title": {
+            "type": "text"
+        },
+        "content": {
+            "type": "text"
+        },
+        "tags": {
+            "type": "nested",
+            "properties": {
+                "tag_id": {
+                    "type": "integer"
+                },
+                "tag_name": {
+                    "type": "keyword"
+                }
+            }
+        }
+    }
+}
